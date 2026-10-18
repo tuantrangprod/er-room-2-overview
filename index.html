@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b28">
+  <title>Giao Ước Máu: Asylum · Public overview</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #101b28; color: #eef5f2; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: radial-gradient(ellipse 90% 400px at 85% 0%, #254551, transparent 75%), #101b28; }
+    main { max-width: 860px; margin: auto; padding: 45px 22px 72px; }
+    .eyebrow { color: #89edcf; font-size: .75rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { font: 500 clamp(2.5rem, 8vw, 4.4rem)/1 Georgia, serif; letter-spacing: -.05em; margin: 18px 0 12px; }
+    h1 em { color: #a5f1d3; font-style: normal; }
+    .meta, footer { color: #b7c8c8; font-size: .8rem; }
+    .legend { display: flex; flex-wrap: wrap; gap: 9px 18px; margin: 20px 0 28px; color: #b7c8c8; font-size: .76rem; }
+    .legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #9eabb1; }
+    .dot.locked { background: #5cdaad; }
+    .dot.stable { background: #75bfff; }
+    section { margin: 0 0 26px; --tone: #d0b5f7; }
+    section[data-color="orange"] { --tone: #ffd591; }
+    section[data-color="cyan"] { --tone: #9ee2e5; }
+    section[data-color="mint"] { --tone: #a4f1d4; }
+    section.feature { border: 2px solid #a4f1d4; border-radius: 16px; padding: 10px 15px; background: #1d4145; --tone: #a4f1d4; }
+    h2 { margin: 0 0 8px; color: var(--tone); font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; }
+    .row { border-bottom: 1px solid #354955; }
+    .row:last-child, .feature .row { border: 0; }
+    .row-head { display: grid; grid-template-columns: 12px minmax(120px, 165px) 1fr 24px; align-items: center; gap: 10px; padding: 12px 4px; line-height: 1.5; list-style: none; }
+    .row-head:not(.expandable) { grid-template-columns: 12px minmax(120px, 165px) 1fr; }
+    summary { cursor: pointer; }
+    summary::-webkit-details-marker { display: none; }
+    summary:hover { background: #ffffff0b; }
+    summary:focus-visible, a:focus-visible { outline: 2px solid #9df6d8; }
+    .keyword { color: var(--tone); }
+    .brief { color: #e1eeeb; }
+    .more { margin: -2px 0 12px 197px; color: #b7c8c8; font-size: .82rem; line-height: 1.55; }
+    .more p { margin: 0 0 7px; }
+    .sketch { overflow-x: auto; padding: 12px; border-radius: 8px; background: #0d1720; color: #b7c8c8; }
+    .expand { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 5px; background: #ffffff12; color: #a4f1d4; }
+    .references { display: flex; flex-wrap: wrap; gap: 10px; margin: 30px 0; }
+    .references a { color: #89edcf; }
+    footer { border-top: 1px solid #354955; padding-top: 18px; }
+    @media (max-width: 560px) {
+      main { padding: 28px 18px 60px; }
+      .row-head, .row-head:not(.expandable) { grid-template-columns: 12px 1fr 24px; gap: 2px 9px; }
+      .keyword { grid-column: 2; }
+      .brief { grid-column: 2; grid-row: 2; }
+      .expand { grid-column: 3; grid-row: 1 / 3; }
+      .more { margin-left: 31px; }
+    }
+  </style>
+</head>
+<body>
+  <main id="summary"><noscript>Cần bật JavaScript để xem báo cáo Phòng 2.</noscript></main>
+  <script src="room-2-summary-data.js?v=8314a5d51936"></script>
+  <script>
+    // Display only. Public content lives in adjacent generated data JS.
+    const data = window.room2Summary;
+    const root = document.getElementById('summary');
+    function add(parent, tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      parent.append(node);
+      return node;
+    }
+    function renderRow(parent, item) {
+      const wrapper = add(parent, 'div', 'row');
+      const expandable = Boolean(item.details?.length || item.sketch);
+      const panel = add(wrapper, expandable ? 'details' : 'div');
+      const head = add(panel, expandable ? 'summary' : 'div', expandable ? 'row-head expandable' : 'row-head');
+      const dot = add(head, 'span', `dot ${item.status}`);
+      dot.title = data.statusLegend[item.status];
+      dot.setAttribute('role', 'img');
+      dot.setAttribute('aria-label', data.statusLegend[item.status]);
+      add(head, 'strong', 'keyword', item.keyword);
+      add(head, 'span', 'brief', item.brief);
+      if (!expandable) return;
+      add(head, 'span', 'expand', '…').setAttribute('aria-hidden', 'true');
+      const more = add(panel, 'div', 'more');
+      if (item.sketch) add(more, 'pre', 'sketch', item.sketch);
+      item.details?.forEach(detail => add(more, 'p', '', detail));
+    }
+    if (data) {
+      document.title = data.title;
+      root.replaceChildren();
+      add(root, 'div', 'eyebrow', data.eyebrow);
+      const title = add(root, 'h1');
+      add(title, 'span', '', data.heading[0]);
+      add(title, 'br');
+      add(title, 'em', '', data.heading[1]);
+      add(root, 'p', 'meta', `${data.scope} · Updated ${data.publishedAt}`);
+      const legend = add(root, 'div', 'legend');
+      for (const status of ['locked', 'stable']) {
+        const item = add(legend, 'span');
+        add(item, 'i', `dot ${status}`);
+        add(item, 'span', '', data.statusLegend[status]);
+      }
+      const feature = add(root, 'section', 'feature');
+      renderRow(feature, data.usp);
+      data.roomSections.forEach(section => {
+        const group = add(root, 'section');
+        if (section.colorPreset) group.dataset.color = section.colorPreset;
+        add(group, 'h2', '', section.title);
+        section.rows.forEach(item => renderRow(group, item));
+      });
+      const references = add(root, 'nav', 'references');
+      references.setAttribute('aria-label', 'Public references');
+      data.references.forEach(item => {
+        const link = add(references, 'a', '', `${item.keyword} ↗`);
+        link.href = item.href;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.title = item.brief;
+      });
+      add(root, 'footer', '', data.footer);
+    }
+  </script>
+</body>
+</html>
